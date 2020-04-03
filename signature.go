@@ -22,6 +22,15 @@ type SignatureType struct {
 	weak2block map[uint32]int
 }
 
+func (signatureType *SignatureType) GetStrongChecksums() ([][]byte) {
+	return signatureType.strongSigs
+}
+
+func (signatureType *SignatureType) GetWeakRollsum() (map[uint32]int) {
+	return signatureType.weak2block
+}
+
+
 func CalcStrongSum(data []byte, sigType MagicNumber, strongLen uint32) ([]byte, error) {
 	switch sigType {
 	case BLAKE2_SIG_MAGIC:
