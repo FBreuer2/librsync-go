@@ -19,17 +19,16 @@ type SignatureType struct {
 	blockLen   uint32
 	strongLen  uint32
 	strongSigs [][]byte
-	weak2block map[uint32]int
+	weak2block map[uint32]int64
 }
 
-func (signatureType *SignatureType) GetStrongChecksums() ([][]byte) {
+func (signatureType *SignatureType) GetStrongChecksums() [][]byte {
 	return signatureType.strongSigs
 }
 
-func (signatureType *SignatureType) GetWeakRollsum() (map[uint32]int) {
+func (signatureType *SignatureType) GetWeakRollsum() map[uint32]int64 {
 	return signatureType.weak2block
 }
-
 
 func CalcStrongSum(data []byte, sigType MagicNumber, strongLen uint32) ([]byte, error) {
 	switch sigType {
@@ -76,7 +75,7 @@ func Signature(input io.Reader, output io.Writer, blockLen, strongLen uint32, si
 	block := make([]byte, blockLen)
 
 	var ret SignatureType
-	ret.weak2block = make(map[uint32]int)
+	ret.weak2block = make(map[uint32]int64)
 	ret.sigType = sigType
 	ret.strongLen = strongLen
 	ret.blockLen = blockLen
@@ -99,7 +98,7 @@ func Signature(input io.Reader, output io.Writer, blockLen, strongLen uint32, si
 		strong, _ := CalcStrongSum(data, sigType, strongLen)
 		output.Write(strong)
 
-		ret.weak2block[weak] = len(ret.strongSigs)
+		ret.weak2block[weak] = int64(len(ret.strongSigs))
 		ret.strongSigs = append(ret.strongSigs, strong)
 	}
 
